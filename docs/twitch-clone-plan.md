@@ -51,7 +51,7 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 - [ ] Rebase onto current trunk before the code-ready report and babysit.
 - [ ] Efficiency. No `bun run build` in any lane or gate unless the PR changes build config or `e2e/`. No E2E smoke unless `e2e/` changed. Static gates run once. Targeted tests only, `bun run test -- <feature path>`.
 - [ ] Worktree discipline. Trivial single-file or doc fixes are edited on the current branch without a worktree or owner. Reserve worktrees for concurrent owners. Reuse an existing worktree by branch name before creating one. Prune lane worktrees after the verdict.
-- [ ] Subagent routing. Prefer specialized agents over generic implementer: nextjs-frontend for UI, supabase-data for schema/RLS/repositories, realtime-chat for chat/presence, mux-streaming for ingest/playback, security-auditor for RLS/XSS, accessibility-reviewer for a11y, test-writer for tests, reviewer for audit lanes, debugger for root-cause, explorer for research. Fall back to implementer only when no specialist fits. Keep each brief self-contained and scoped to one feature folder. No shared write targets.
+- [ ] Subagent routing. Prefer specialized agents over generic implementer, nextjs-frontend for UI, supabase-data for schema/RLS/repositories, realtime-chat for chat/presence, mux-streaming for ingest/playback, security-auditor for RLS/XSS, accessibility-reviewer for a11y, test-writer for tests, reviewer for audit lanes, debugger for root-cause, explorer for research. Fall back to implementer only when no specialist fits. Keep each brief self-contained and scoped to one feature folder. No shared write targets.
 - [ ] Commit discipline. One logical change per commit. Atomic and revertable.
 - [ ] Conventional type prefix. feat, fix, refactor, perf, test, docs, chore, build, ci.
 - [ ] Subject line 50 chars max. Imperative mood. Capitalized. No trailing period.
@@ -794,6 +794,18 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 - Orange contrast on white. Mitigation. Use darker orange for text and links.
 - Supabase realtime limits on large streams. Mitigation. Presence aggregation and plan upgrade.
 - Emote moderation bottleneck. Mitigation. Auto-approve safe formats and manual review queue.
+
+## Appendix E. Quality bar (best practices)
+
+CSS (good-css). Container queries with `container-type: inline-size`. Logical properties (`margin-inline`, `padding-block`, `inset-inline`). `:has()` for parent selection. Cascade layers for precedence. `color-mix(in oklch)` for hover/tint variants. `light-dark()` with `color-scheme` for dark mode tokens. `clamp()` fluid type with max-min ratio at most 2.5x. Universal reset with `box-sizing: border-box`, `min-width: 0`, `min-height: 100svh`, `text-wrap: pretty`, stable scrollbar gutter. Hover only under `@media (hover: hover) and (pointer: fine)`. Focus via `:focus-visible`. Every pressable has `:active`. Two named easing tokens, UI transitions 300ms or less, named properties only. Tabular nums for dynamic numbers.
+
+TypeScript. Strict mode plus `noUncheckedIndexedAccess`, `noImplicitReturns`, `exactOptionalPropertyTypes`, `noFallthroughCasesInSwitch`, `isolatedModules`, `verbatimModuleSyntax`. Branded types for ids. Zod at boundaries with `safeParse`, `.strict()`, discriminated unions. No `any` (use `unknown`). Exhaustive switches with `never` default. `import type`. `satisfies` over `as`. Schema-derived types. noEmit in CI via tsrs.
+
+UI polish (Emil / make-interfaces-feel-better). Concentric border radius (outer = inner + padding). Optical alignment for icons. Layered shadows for elevation, borders for structure. Image outline 1px pure black/white. Font smoothing on root. `text-wrap: balance` on headings, `pretty` on body. Tabular nums for numbers. Hover gated on hover media. Press scale 0.96 to 0.97, 100 to 160ms ease-out. Interruptible transitions (CSS transitions for state). Never animate from scale(0). Asymmetric timing. Motion under 300ms. Only transform and opacity animated. Reduced motion keeps opacity/color, drops movement. Dark mode uses single white ring shadow.
+
+React/Next. Server Components by default, push `use client` to leaves. Streaming with Suspense, granular boundaries. `next/image` with preload for LCP. `next/font` self-hosted, variable, subset. Direct imports, no barrels. `next/dynamic` for heavy components. `Promise.all` for independent ops, defer await. React Compiler enabled. Hoist static I/O.
+
+Accessibility. Keyboard operable all controls. Visible persistent focus. `role="log"` with `aria-live="polite"` for chat. Feed pattern for streams. Media player accessible. Reduced motion support and toggle. Contrast 4.5:1 normal text, 3:1 large. Accessible names 1 to 3 words. Test with assistive tech.
 
 ## Appendix D. Links and reading list
 
