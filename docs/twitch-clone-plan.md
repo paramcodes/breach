@@ -51,7 +51,7 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 - [ ] Rebase onto current trunk before the code-ready report and babysit.
 - [ ] Efficiency. No `bun run build` in any lane or gate unless the PR changes build config or `e2e/`. No E2E smoke unless `e2e/` changed. Static gates run once. Targeted tests only, `bun run test -- <feature path>`.
 - [ ] Worktree discipline. Trivial single-file or doc fixes are edited on the current branch without a worktree or owner. Reserve worktrees for concurrent owners. Reuse an existing worktree by branch name before creating one. Prune lane worktrees after the verdict.
-- [ ] Subagent routing. Use explorer for research and file search. Use implementer for code edits. Use test-writer for tests only. Use reviewer for audit lanes. Use debugger for root-cause. Keep each brief self-contained and scoped to one feature folder. No shared write targets.
+- [ ] Subagent routing. Prefer specialized agents over generic implementer: nextjs-frontend for UI, supabase-data for schema/RLS/repositories, realtime-chat for chat/presence, mux-streaming for ingest/playback, security-auditor for RLS/XSS, accessibility-reviewer for a11y, test-writer for tests, reviewer for audit lanes, debugger for root-cause, explorer for research. Fall back to implementer only when no specialist fits. Keep each brief self-contained and scoped to one feature folder. No shared write targets.
 - [ ] Commit discipline. One logical change per commit. Atomic and revertable.
 - [ ] Conventional type prefix. feat, fix, refactor, perf, test, docs, chore, build, ci.
 - [ ] Subject line 50 chars max. Imperative mood. Capitalized. No trailing period.
