@@ -24,7 +24,8 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 
 ### Spawn owners
 
-- [ ] Spawn one owner per PR with the full lifecycle the execution playbook names. Every owner gets its own git worktree off its own branch.
+- [ ] Spawn one owner per PR with the full lifecycle the execution playbook names. One worktree per concurrently active owner. Sequential and stacked owners reuse a single checkout by branch name. Reuse an existing worktree before creating a new one.
+- [ ] Spawn an owner only when its dependencies are merged or its parent branch exists. Otherwise queue it.
 - [ ] Follow this dependency graph. Start dependent work only after its parent merges, or base it on the parent branch when stacking.
   - [ ] PR-01 and PR-02 are independent first. Both branch from main.
   - [ ] PR-03 after PR-01 and PR-02.
@@ -48,6 +49,9 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 - [ ] Run the local deslop skill before each commit and the no-comments skill before review.
 - [ ] Triage every Bugbot and security-reviewer comment per the bugbot triage reference.
 - [ ] Rebase onto current trunk before the code-ready report and babysit.
+- [ ] Efficiency. No `bun run build` in any lane or gate unless the PR changes build config or `e2e/`. No E2E smoke unless `e2e/` changed. Static gates run once. Targeted tests only, `bun run test -- <feature path>`.
+- [ ] Worktree discipline. Trivial single-file or doc fixes are edited on the current branch without a worktree or owner. Reserve worktrees for concurrent owners. Reuse an existing worktree by branch name before creating one. Prune lane worktrees after the verdict.
+- [ ] Subagent routing. Use explorer for research and file search. Use implementer for code edits. Use test-writer for tests only. Use reviewer for audit lanes. Use debugger for root-cause. Keep each brief self-contained and scoped to one feature folder. No shared write targets.
 - [ ] Commit discipline. One logical change per commit. Atomic and revertable.
 - [ ] Conventional type prefix. feat, fix, refactor, perf, test, docs, chore, build, ci.
 - [ ] Subject line 50 chars max. Imperative mood. Capitalized. No trailing period.
@@ -66,11 +70,12 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 ### Boot recipe
 
 - [ ] Each live lane runs in its own git worktree at the PR head. Drive it through control-ui for browser surfaces.
+  - [ ] Reuse lane slots idempotently. `git worktree add` is a no-op if present. Prune all lane worktrees once the verdict is recorded.
   - [ ] `git fetch origin <head-branch> && git worktree add .worktrees/swarm-<pr-id>/worker-<n> <head SHA>`. Re-running reuses it.
-  - [ ] Start the backend and the surface. Wait for ready.
+  - [ ] Start the backend and the surface. Wait for ready. Static and read-only lanes run in the owner checkout without a dev server.
   - [ ] Deliver input only through control-ui commands. Name the read-only diagnostics.
   - [ ] Save every screenshot to `.worktrees/swarm-<pr-id>/worker-<n>/<slug>.png`.
-  - [ ] Leave lane worktrees on disk until the verdict is recorded.
+  - [ ] Leave lane worktrees on disk until the verdict is recorded. Then remove and recycle.
 
 ## Foundation (PR-01)
 
@@ -176,7 +181,7 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. Channel fetch latency and auth round-trip.
+- [ ] Metric. Functional SLA (not perf regression). Channel fetch latency and auth round-trip.
 - [ ] Probe. Measure with agent-browser network panel.
 - [ ] Baseline. Record trunk value. Trunk lacks the feature. Record absolute budget.
 - [ ] Rule. Channel fetch under 200ms. Auth round-trip under 1s.
@@ -356,7 +361,7 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. Webhook processing latency and go-live round-trip.
+- [ ] Metric. Functional SLA (not perf regression). Webhook processing latency and go-live round-trip.
 - [ ] Probe. Measure webhook to DB update time.
 - [ ] Baseline. Record trunk value. Trunk lacks the feature. Record absolute budget.
 - [ ] Rule. Webhook to DB update under 2s. Go-live round-trip under 5s.
@@ -532,7 +537,7 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. Follow toggle latency and notification delivery latency.
+- [ ] Metric. Functional SLA (not perf regression). Follow toggle latency and notification delivery latency.
 - [ ] Probe. Measure follow API and notification delivery.
 - [ ] Baseline. Record trunk value. Trunk lacks the feature. Record absolute budget.
 - [ ] Rule. Follow toggle under 300ms. Notification delivery under 5s.
@@ -586,7 +591,7 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. Search response latency.
+- [ ] Metric. Functional SLA (not perf regression). Search response latency.
 - [ ] Probe. Measure search API response.
 - [ ] Baseline. Record trunk value. Trunk lacks the feature. Record absolute budget.
 - [ ] Rule. Search response under 300ms.
@@ -644,11 +649,7 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 - [ ] Baseline. Record trunk value. Trunk lacks the feature. Record absolute budget.
 - [ ] Rule. Dashboard LCP under 2.5s.
 
-**Review gate.**
-
-- [ ] Copy lane screenshots into `media/pr-10-review/`.
-- [ ] Record a 30 to 60 second video. Save as `media/pr-10-review.mp4`.
-- [ ] Post screenshots and video in chat. Stop at merge-ready. Wait for operator click.
+**Review gate.** None. PR-10 is not review-gated unless it changes user-facing interaction.
 
 **Merge.**
 
@@ -696,7 +697,7 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 
 **Verify, perf.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.
 
-- [ ] Metric. Moderation action latency.
+- [ ] Metric. Functional SLA (not perf regression). Moderation action latency.
 - [ ] Probe. Measure ban to enforcement.
 - [ ] Baseline. Record trunk value. Trunk lacks the feature. Record absolute budget.
 - [ ] Rule. Moderation action under 500ms.
@@ -756,11 +757,7 @@ The program runs `playbooks/autopilot-stack.md`. The operator reviews and lands 
 - [ ] Baseline. Record trunk values first.
 - [ ] Rule. LCP under 2.5s. CLS under 0.1. INP under 200ms.
 
-**Review gate.**
-
-- [ ] Copy lane screenshots into `media/pr-12-review/`.
-- [ ] Record a 30 to 60 second video. Save as `media/pr-12-review.mp4`.
-- [ ] Post screenshots and video in chat. Stop at merge-ready. Wait for operator click.
+**Review gate.** None. PR-12 is not review-gated unless it changes user-facing interaction.
 
 **Merge.**
 
