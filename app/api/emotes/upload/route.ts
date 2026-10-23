@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import type { Emote, EmoteStatus } from "@/features/emotes/emotes.types";
+import type { Emote, EmoteStatus } from "@/features/emotes";
 import { createClient } from "@/shared/db/client";
 import { logger } from "@/shared/lib/logger";
 
@@ -19,24 +19,24 @@ export async function GET(request: NextRequest) {
 
     // Validate name
     if (!EMOTE_NAME_REGEX.test(name)) {
-      return new Response(
-        JSON.stringify({ error: "Invalid emote name" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Invalid emote name" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     // Validate mime type
-    if (!ACCEPTED_MIME_TYPES.includes(mimeType as any)) {
+    if (!ACCEPTED_MIME_TYPES.includes(mimeType as (typeof ACCEPTED_MIME_TYPES)[number])) {
       return new Response(
         JSON.stringify({ error: "Invalid mime type. Only PNG and GIF are allowed" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        { status: 400, headers: { "Content-Type": "application/json" } },
       );
     }
 
     // Create Supabase client for checking channel ownership
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
     );
 
     // Check channel ownership
@@ -57,7 +57,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Check that the user is the channel owner
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user || user.id !== channel.owner_id) {
       return new Response(JSON.stringify({ error: "Unauthorized: not channel owner" }), {
         status: 403,
@@ -95,15 +97,15 @@ export async function POST(request: NextRequest) {
     const { channelId, name, r2Key, url } = body;
 
     if (!channelId || !name || !r2Key || !url) {
-      return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Missing required fields" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
     );
 
     // Check channel ownership
@@ -123,7 +125,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user || user.id !== channel.owner_id) {
       return new Response(JSON.stringify({ error: "Unauthorized: not channel owner" }), {
         status: 403,
@@ -145,7 +149,7 @@ export async function POST(request: NextRequest) {
     if (existingEmote && existingEmote.status !== "rejected") {
       return new Response(
         JSON.stringify({ error: "An emote with this name already exists in this channel" }),
-        { status: 409, headers: { "Content-Type": "application/json" } }
+        { status: 409, headers: { "Content-Type": "application/json" } },
       );
     }
 

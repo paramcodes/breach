@@ -29,6 +29,7 @@ export function FollowerTooltip({ channelId }: { channelId: string }) {
   return (
     <div>
       <button
+        type="button"
         onClick={() => setTooltipOpen(!tooltipOpen)}
         className="relative inline-flex items-center rounded-full border border-primary bg-primary px-4 py-2 text-sm font-medium text-white"
         aria-label="Followers"
@@ -42,6 +43,7 @@ export function FollowerTooltip({ channelId }: { channelId: string }) {
           <p className="text-sm font-medium">Followers</p>
           <p className="mt-2 text-lg">{followerCount} followers</p>
           <button
+            type="button"
             onClick={() => setTooltipOpen(false)}
             className="mt-4 inline-flex items-center gap-2 rounded-full border border-input px-3 py-1.5 text-sm font-medium accent-contrast"
             aria-label="Close"

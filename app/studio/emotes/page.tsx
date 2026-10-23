@@ -1,12 +1,6 @@
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Emotes | Twitch Clone",
-  description: "Manage emotes for your channel.",
-};
-
-import { EmoteUploadForm } from "@/features/emotes/emotes-ui";
-import { EmoteList } from "@/features/emotes/emotes-ui";
+import { EmoteList, EmoteUploadForm } from "@/features/emotes";
 
 export default function EmotesPage() {
   return (

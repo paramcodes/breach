@@ -7,3 +7,17 @@ vi.mock("@mux/mux-player-react", () => {
     React.createElement("div", { "data-testid": "mux-player", ...props });
   return { default: MockPlayer };
 });
+
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: (query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false,
+  }),
+});

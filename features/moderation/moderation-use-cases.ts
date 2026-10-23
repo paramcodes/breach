@@ -1,14 +1,14 @@
 import { InMemoryModerationRepository } from "./in-memory-moderation-repository";
 import type {
   Ban,
-  Timeout,
-  ModerationSettings,
   BanUserInput,
+  ModerationSettings,
+  Timeout,
   TimeoutUserInput,
   UnbanInput,
 } from "./moderation.types";
 
-export type { Ban, Timeout, ModerationSettings } from "./moderation.types";
+export type { Ban, ModerationSettings, Timeout } from "./moderation.types";
 
 export interface ModActionLogEntry {
   id: string;
@@ -61,7 +61,10 @@ export class ModerationUseCases {
     return this.repo.getModerationSettings(channelId);
   }
 
-  async updateModerationSettings(channelId: string, patch: Partial<ModerationSettings>): Promise<ModerationSettings> {
+  async updateModerationSettings(
+    channelId: string,
+    patch: Partial<ModerationSettings>,
+  ): Promise<ModerationSettings> {
     return this.repo.updateModerationSettings(channelId, patch);
   }
 

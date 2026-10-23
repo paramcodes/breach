@@ -37,7 +37,7 @@ export function FollowButton({ channelId }: { channelId: string }) {
 
   if (!userId) {
     return (
-      <button className="hidden sm:block" disabled>
+      <button type="button" className="hidden sm:block" disabled>
         Follow
       </button>
     );

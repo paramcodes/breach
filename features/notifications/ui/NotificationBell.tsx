@@ -61,6 +61,7 @@ export function NotificationBell() {
   return (
     <div className="relative group">
       <button
+        type="button"
         onClick={() => {
           /* toggle dropdown */
         }}
@@ -92,12 +93,8 @@ export function NotificationBell() {
               className="flex items-start gap-3 rounded-box px-py py-2 border-b last:border-0"
             >
               <div className="flex-shrink-0">
-                <svg
-                  className="h-5 w-5 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor">
+                  <title>Notification icon</title>
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -111,6 +108,7 @@ export function NotificationBell() {
                 <p className="text-xs text-muted-foreground truncate">{notif.created_at}</p>
               </div>
               <button
+                type="button"
                 onClick={() => markAsRead(notif.id)}
                 className="ml-2 text-primary underline text-sm hover:text-primary/90"
                 aria-label="Mark as read"
@@ -122,6 +120,7 @@ export function NotificationBell() {
           {notifications.length > 0 ? (
             <div className="mt-4 pt-4 border-t">
               <button
+                type="button"
                 onClick={() => {
                   /* mark all read */
                 }}

@@ -1,11 +1,5 @@
-import { test, expect } from "bun:test";
-import {
-  createModerationUseCases,
-  type Ban,
-  type Timeout,
-  type ModActionLogEntry,
-} from "../moderation-use-cases";
-import { InMemoryModerationRepository } from "../in-memory-moderation-repository";
+import { expect, test } from "vitest";
+import { createModerationUseCases } from "../moderation-use-cases";
 
 test("ban user", async () => {
   const modUseCases = createModerationUseCases();

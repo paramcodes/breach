@@ -1,15 +1,13 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { colors } from "@/shared/design-tokens/tokens";
 import { LiveBadge } from "@/shared/ui/live-badge";
-
 import { formatViewerCount } from "../format";
 import type { WatchStream } from "../stream.types";
 import { MuxVideo, type MuxVideoElement } from "./MuxVideo";
 import styles from "./watch.module.css";
-import { reducedMotion, reducedMotionStyle } from "@/shared/lib/a11y";
 
 type StreamPlayerProps = {
   channelName: string;

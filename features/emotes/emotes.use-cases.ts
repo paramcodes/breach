@@ -1,5 +1,4 @@
-import { logger } from "@/shared/lib/logger";
-import type { Emote, CreateEmoteInput, EmoteStatus } from "../emotes/emotes.types";
+import type { CreateEmoteInput, Emote, EmoteStatus } from "../emotes/emotes.types";
 
 export const EMOTE_MAX_SIZE = 1 * 1024 * 1024; // 1MB
 export const EMOTE_MAX_FRAMES = 60;
@@ -33,20 +32,18 @@ export async function validateEmoteFile(
   name: string,
   mimeType: string,
   fileSize: number,
-  frameCount: number
+  frameCount: number,
 ): Promise<EmoteValidationResult> {
   const validator = new EmoteValidator();
   return await validator.validateUpload(name, mimeType, fileSize, frameCount);
 }
 
 export class EmoteValidator {
-  constructor() {}
-
   async validateUpload(
     name: string,
     mimeType: string,
     fileSize: number,
-    frameCount: number
+    frameCount: number,
   ): Promise<EmoteValidationResult> {
     const errors: EmoteValidationErrors = {};
 
@@ -56,7 +53,7 @@ export class EmoteValidator {
     }
 
     // Validate format
-    if (!EMOTE_ACCEPTED_TYPES.includes(mimeType as any)) {
+    if (!EMOTE_ACCEPTED_TYPES.includes(mimeType as (typeof EMOTE_ACCEPTED_TYPES)[number])) {
       errors.format = "Only PNG and GIF images are allowed";
     }
 
@@ -83,7 +80,7 @@ export class EmoteValidator {
 }
 
 export async function createEmoteUseCase(
-  input: CreateEmoteInput & { name: string }
+  input: CreateEmoteInput & { name: string },
 ): Promise<Emote> {
   // Full validation happens in the API route
   // This creates the emote with pending status
@@ -99,7 +96,12 @@ export async function createEmoteUseCase(
 }
 
 export function createEmotesUseCases(deps: {
-  repository: any;
+  repository: {
+    listEmotes: (channelId: string, status?: EmoteStatus) => Promise<Emote[]>;
+    getEmote: (id: string) => Promise<Emote | null>;
+    updateEmote: (id: string, status: EmoteStatus) => Promise<Emote>;
+    deleteEmote: (id: string) => Promise<void>;
+  };
 }) {
   const validator = new EmoteValidator();
 

@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import type { Emote, EmoteStatus } from "@/features/emotes/emotes.types";
+import type { Emote, EmoteStatus } from "@/features/emotes";
 import { createClient } from "@/shared/db/client";
 import { logger } from "@/shared/lib/logger";
 
@@ -9,15 +9,15 @@ export async function PATCH(request: NextRequest) {
     const { emoteId, status } = body;
 
     if (!emoteId || !status || !["approved", "rejected"].includes(status)) {
-      return new Response(
-        JSON.stringify({ error: "Invalid emote ID or status" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Invalid emote ID or status" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
     );
 
     // Check emote exists and get channel_id
@@ -37,7 +37,9 @@ export async function PATCH(request: NextRequest) {
       });
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       return new Response(JSON.stringify({ error: "Unauthenticated" }), {
         status: 401,

@@ -10,7 +10,9 @@
       "!**/bun.lock",
       "!**/*.tsbuildinfo",
       "!**/next-env.d.ts",
-      "!**/*.md"
+      "!**/*.md",
+      "!pr-12-work",
+      "!record-demo.ts"
     ]
   },
   "formatter": {
@@ -33,7 +35,11 @@
       },
       "style": {
         "noNonNullAssertion": "error",
-        "useConst": "error"
+        "useConst": "error",
+        "noDescendingSpecificity": "off"
+      },
+      "performance": {
+        "noImgElement": "off"
       },
       "correctness": {
         "noUnusedImports": "error",

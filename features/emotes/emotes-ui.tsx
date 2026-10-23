@@ -1,7 +1,9 @@
+"use client";
+
 import type { FC } from "react";
 import React from "react";
 import { logger } from "@/shared/lib/logger";
-import type { Emote, EmoteStatus, EmoteValidationErrors } from "../emotes/emotes.types";
+import type { Emote, EmoteStatus } from "../emotes/emotes.types";
 
 export type EmoteUploadFormProps = {
   channelId: string;
@@ -10,12 +12,7 @@ export type EmoteUploadFormProps = {
   emotes: Emote[];
 };
 
-export const EmoteUploadForm: FC<EmoteUploadFormProps> = ({
-  channelId,
-  onEmoteCreated,
-  onStatusChanged,
-  emotes,
-}) => {
+export const EmoteUploadForm: FC<EmoteUploadFormProps> = ({ channelId, onEmoteCreated }) => {
   const [file, setFile] = React.useState<File | null>(null);
   const [name, setName] = React.useState<string>("");
   const [error, setError] = React.useState<string | null>(null);
@@ -41,14 +38,12 @@ export const EmoteUploadForm: FC<EmoteUploadFormProps> = ({
       name,
       mimeType,
       fileSize,
-      1 // frameCount will be checked on GIFs
+      1, // frameCount will be checked on GIFs
     );
 
     if (!valid) {
       const errorKeys = Object.keys(errors);
-      setError(
-        errorKeys.length > 0 ? errorKeys[0] : "Validation failed"
-      );
+      setError(errorKeys.length > 0 ? errorKeys[0] : "Validation failed");
       setUploading(false);
       return;
     }
@@ -93,9 +88,7 @@ export const EmoteUploadForm: FC<EmoteUploadFormProps> = ({
           required
           className="w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
         />
-        {error && (
-          <p className="text-sm text-red-600 mt-1">{error}</p>
-        )}
+        {error && <p className="text-sm text-red-600 mt-1">{error}</p>}
       </div>
 
       <div>
@@ -126,9 +119,7 @@ export const EmoteUploadForm: FC<EmoteUploadFormProps> = ({
   );
 };
 
-export const EmoteStatusBadge: React.FC<{ status: EmoteStatus }> = ({
-  status,
-}) => {
+export const EmoteStatusBadge: React.FC<{ status: EmoteStatus }> = ({ status }) => {
   const statusMap: Record<EmoteStatus, [string, string]> = {
     pending: ["pending", "opacity-50"],
     approved: ["approved", "bg-green-100 text-green-800"],
@@ -145,9 +136,7 @@ export const EmoteStatusBadge: React.FC<{ status: EmoteStatus }> = ({
 
 export const EmoteCard: React.FC<{ emote: Emote }> = ({ emote }) => {
   return (
-    <div
-      className="relative group border rounded-lg p-4 transition-colors duration-200 hover:shadow-sm"
-    >
+    <div className="relative group border rounded-lg p-4 transition-colors duration-200 hover:shadow-sm">
       <img
         src={emote.url}
         alt={emote.name}
@@ -185,7 +174,7 @@ export async function validateEmoteFile(
   name: string,
   mimeType: string,
   fileSize: number,
-  frameCount: number
+  frameCount: number,
 ): Promise<{
   valid: boolean;
   errors: {

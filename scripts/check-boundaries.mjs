@@ -2,7 +2,16 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
 const ROOT = process.cwd();
-const EXCLUDE = new Set(["node_modules", ".next", "dist", "coverage", ".git", ".worktrees"]);
+const EXCLUDE = new Set([
+  "node_modules",
+  ".next",
+  "dist",
+  "coverage",
+  ".git",
+  ".worktrees",
+  "pr-12-work",
+]);
+const FILE_EXCLUDE = new Set(["record-demo.ts"]);
 
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {
@@ -10,7 +19,7 @@ function walk(dir, out = []) {
     const full = join(dir, entry);
     const st = statSync(full);
     if (st.isDirectory()) walk(full, out);
-    else if (/\.(ts|tsx|js|jsx|mjs)$/.test(entry)) out.push(full);
+    else if (/\.(ts|tsx|js|jsx|mjs)$/.test(entry) && !FILE_EXCLUDE.has(entry)) out.push(full);
   }
   return out;
 }

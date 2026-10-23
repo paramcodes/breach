@@ -1,12 +1,11 @@
-import type { ChatRepository } from "../chat/ChatRepository";
 import type {
   Ban,
-  ModActionLogEntry,
-  Timeout,
   BanUserInput,
+  ModActionLogEntry,
+  ModerationSettings,
+  Timeout,
   TimeoutUserInput,
   UnbanInput,
-  ModerationSettings,
 } from "./moderation.types";
 
 export class InMemoryModerationRepository {
@@ -114,23 +113,25 @@ export class InMemoryModerationRepository {
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   }
 
-  async recordModAction(action: Omit<ModActionLogEntry, "id" | "createdAt">): Promise<ModActionLogEntry> {
+  async recordModAction(
+    action: Omit<ModActionLogEntry, "id" | "createdAt">,
+  ): Promise<ModActionLogEntry> {
     const id = this.nextId("action");
     const entry: ModActionLogEntry = { ...action, id, createdAt: new Date().toISOString() };
     this.actions.push(entry);
     return entry;
   }
 
-  async getModerationSettings(channelId: string): Promise<ModerationSettings> {
+  async getModerationSettings(_channelId: string): Promise<ModerationSettings> {
     // Return default settings if none configured
     return { slowMode: false, slowModeSeconds: 5, emoteOnly: false };
   }
 
   async updateModerationSettings(
-    channelId: string,
-    patch: Partial<ModerationSettings>,
+    _channelId: string,
+    _patch: Partial<ModerationSettings>,
   ): Promise<ModerationSettings> {
     // For now, just return defaults; Supabase integration can be added later
-    return this.getModerationSettings(channelId);
+    return this.getModerationSettings(_channelId);
   }
 }

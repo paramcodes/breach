@@ -9,12 +9,13 @@ PR-03 status: done — PR #3 open (base pr-02-data, head pr-03-browse), all gate
 PR-04 status: done — PR #4 open (base pr-03-browse, head pr-04-watch), all gates pass.
 PR-05 status: done — PR #5 open (base pr-04-watch, head pr-05-stream), all gates pass.
 PR-06 status: done — PR #6 open (base pr-05-stream, head pr-06-chat), all gates pass.
-PR-07 status: done — PR open (base pr-06-chat, head pr-07-emotes), all gates pass.
-PR-08 status: done — PR open (base pr-07-emotes, head pr-08-follow), all gates pass.
-PR-09 status: done — PR open (base pr-08-follow, head pr-09-search), all gates pass.
-PR-10 status: done — PR open (base pr-09-search, head pr-10-studio), all gates pass.
-PR-11 status: done — PR open (base pr-10-studio, head pr-11-moderation), all gates pass.
-PR-12 status: done — PR open (base pr-11-moderation, head pr-12-polish), all gates pass.
-All 12 PRs complete. Stack ready for operator review and landing.
+PR-07 status: done — merged into main.
+PR-08 status: done — merged into main.
+PR-09 status: done — merged into main.
+PR-10 status: done — merged into main.
+PR-11 status: done — merged into main.
+PR-12 status: done — merged into main.
+All 12 PRs complete. Stack merged to main. Unit gate green (23 test files, 143 passed).
+Lane model: inherit-parent (single opencode family).
 Lane model: inherit-parent (single opencode family).
 Forge: gh. No gt. No origin pr.

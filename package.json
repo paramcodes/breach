@@ -1,7 +1,29 @@
 {
-  "name": "twitch-clone",
-  "private": true,
+  "name": "breach",
   "version": "0.0.0",
+  "private": true,
+  "description": "An orange-themed Twitch clone built with Next.js 15, Mux, Supabase, and R2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paramcodes/breach.git"
+  },
+  "homepage": "https://github.com/paramcodes/breach#readme",
+  "bugs": {
+    "url": "https://github.com/paramcodes/breach/issues"
+  },
+  "keywords": [
+    "twitch",
+    "clone",
+    "live-streaming",
+    "mux",
+    "supabase",
+    "realtime",
+    "nextjs",
+    "react",
+    "typescript"
+  ],
+  "author": "paramcodes",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "next dev",
@@ -26,6 +48,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.0",
+    "@playwright/test": "^1.64.1",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.0.0",
     "@types/node": "^22.0.0",
