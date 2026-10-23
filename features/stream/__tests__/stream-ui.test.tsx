@@ -31,6 +31,13 @@ const liveStream: WatchStream = {
   playbackId: "abc123",
   posterUrl: null,
   tags: ["English", "FPS"],
+  endedAt: null,
+  createdAt: "2026-10-23T10:00:00.000Z",
+  muxStreamId: null,
+  muxPlaybackId: null,
+  streamKeyEncrypted: null,
+  rtmpUrl: null,
+  vodAssetIds: [],
 };
 
 describe("StreamInfoPanel", () => {
