@@ -15,20 +15,29 @@ export interface ChatMessageView {
 type ChatDockProps = {
   channelName: string;
   messages: ChatMessageView[];
+  onSend?: (body: string) => void | Promise<void>;
+  disabled?: boolean;
 };
 
 /**
  * Chat dock shell. Messages arrive from the caller today; the chat slice wires
  * this dock to a live transport.
  */
-export function ChatDock({ channelName, messages }: ChatDockProps) {
+export function ChatDock({ channelName, messages, onSend, disabled }: ChatDockProps) {
   const [draft, setDraft] = useState("");
   const [sent, setSent] = useState<ChatMessageView[]>([]);
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const body = draft.trim();
-    if (!body) return;
+    if (!body || disabled) return;
+    if (onSend) {
+      try {
+        await onSend(body);
+      } catch {
+        return;
+      }
+    }
     setSent((list) => [
       ...list,
       {
@@ -71,7 +80,11 @@ export function ChatDock({ channelName, messages }: ChatDockProps) {
           placeholder="Send a message"
           autoComplete="off"
         />
-        <button type="submit" className={styles.chatSend} disabled={draft.trim().length === 0}>
+        <button
+          type="submit"
+          className={styles.chatSend}
+          disabled={disabled || draft.trim().length === 0}
+        >
           Chat
         </button>
       </form>

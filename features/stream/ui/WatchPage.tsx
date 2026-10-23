@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useState } from "react";
 
 import { colors } from "@/shared/design-tokens/tokens";
@@ -14,9 +14,10 @@ import styles from "./watch.module.css";
 type WatchPageProps = {
   channel: string;
   initialData?: WatchData | null;
+  chat?: ReactNode;
 };
 
-export function WatchPage({ channel, initialData }: WatchPageProps) {
+export function WatchPage({ channel, initialData, chat }: WatchPageProps) {
   const { data, loading, error } = useWatch(channel, initialData);
   const [theater, setTheater] = useState(false);
 
@@ -49,7 +50,7 @@ export function WatchPage({ channel, initialData }: WatchPageProps) {
         <StreamInfoPanel channel={data.channel} stream={data.stream} />
       </div>
       <div className={styles.chatColumn}>
-        <ChatDock channelName={data.channel.name} messages={[]} />
+        {chat ?? <ChatDock channelName={data.channel.name} messages={[]} />}
       </div>
     </div>
   );

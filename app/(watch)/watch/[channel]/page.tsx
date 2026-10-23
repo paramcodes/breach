@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { ChatPanel } from "@/features/chat";
 import { loadWatchData, WatchPage } from "@/features/stream";
 
 type WatchRouteProps = {
@@ -17,5 +18,14 @@ export async function generateMetadata({ params }: WatchRouteProps): Promise<Met
 export default async function WatchRoute({ params }: WatchRouteProps) {
   const { channel } = await params;
   const data = await loadWatchData(channel);
-  return <WatchPage channel={channel} initialData={data} />;
+  if (!data) {
+    return <p className="text-center p-4">Unable to load this channel.</p>;
+  }
+  return (
+    <WatchPage
+      channel={channel}
+      initialData={data}
+      chat={<ChatPanel channelId={data.channel.id} channelName={data.channel.name} />}
+    />
+  );
 }
