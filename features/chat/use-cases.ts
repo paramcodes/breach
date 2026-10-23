@@ -55,7 +55,7 @@ function resolveContext(deps?: ChatDeps | ChatRepository): ChatContext {
   if (deps && typeof (deps as ChatRepository).listMessages === "function") {
     return {
       repository: deps as ChatRepository,
-      transport: InMemoryChatTransport,
+      transport: new InMemoryChatTransport(),
       rateLimiter: createRateLimiter(),
       now: () => Date.now(),
       lastSentAt: new Map(),
@@ -64,7 +64,7 @@ function resolveContext(deps?: ChatDeps | ChatRepository): ChatContext {
   const resolved = (deps ?? {}) as ChatDeps;
   return {
     repository: resolved.repository ?? new InMemoryChatRepository(),
-    transport: resolved.transport ?? InMemoryChatTransport,
+    transport: resolved.transport ?? new InMemoryChatTransport(),
     rateLimiter: resolved.rateLimiter ?? createRateLimiter(),
     now: resolved.now ?? (() => Date.now()),
     lastSentAt: new Map(),
