@@ -1,12 +1,19 @@
 import { logger } from "@/shared/lib/logger";
 import type { ChatRepository } from "./ChatRepository";
-import type { ChatMessage, ChatSettings, CreateChatMessageInput, EmoteStatus } from "./chat.types";
+import type {
+  ChatMessage,
+  ChatSettings,
+  CreateChatMessageInput,
+  EmoteStatus,
+} from "./chat.types";
 import { DEFAULT_CHAT_SETTINGS } from "./chat.types";
 import { isEmoteOnlyBody } from "./emotes";
 import { InMemoryChatRepository } from "./in-memory-chat-repository";
 import { canSendInSlowMode, createRateLimiter, type RateLimiter } from "./rate-limit";
 import type { ChatTransport } from "./realtime";
 import { InMemoryChatTransport } from "./realtime";
+import type { Ban, Timeout } from "../moderation/moderation.types";
+import { InMemoryModerationRepository } from "../moderation/in-memory-moderation-repository";
 
 export const MAX_MESSAGE_LENGTH = 500;
 
@@ -36,9 +43,6 @@ export type ChatDeps = {
   now?: () => number;
 };
 
-const defaultRepository = new InMemoryChatRepository();
-const defaultTransport = new InMemoryChatTransport();
-
 interface ChatContext {
   repository: ChatRepository;
   transport: ChatTransport;
@@ -51,7 +55,7 @@ function resolveContext(deps?: ChatDeps | ChatRepository): ChatContext {
   if (deps && typeof (deps as ChatRepository).listMessages === "function") {
     return {
       repository: deps as ChatRepository,
-      transport: defaultTransport,
+      transport: InMemoryChatTransport,
       rateLimiter: createRateLimiter(),
       now: () => Date.now(),
       lastSentAt: new Map(),
@@ -59,8 +63,8 @@ function resolveContext(deps?: ChatDeps | ChatRepository): ChatContext {
   }
   const resolved = (deps ?? {}) as ChatDeps;
   return {
-    repository: resolved.repository ?? defaultRepository,
-    transport: resolved.transport ?? defaultTransport,
+    repository: resolved.repository ?? new InMemoryChatRepository(),
+    transport: resolved.transport ?? InMemoryChatTransport,
     rateLimiter: resolved.rateLimiter ?? createRateLimiter(),
     now: resolved.now ?? (() => Date.now()),
     lastSentAt: new Map(),
@@ -71,6 +75,23 @@ export async function sendMessageImpl(
   context: ChatContext,
   input: CreateChatMessageInput,
 ): Promise<ChatMessage> {
+  // Moderation checks: ban and timeout
+  const modRepo = new InMemoryModerationRepository();
+  const banned = await modRepo.isUserBanned(input.channelId, input.userId);
+  if (banned) {
+    throw new Error(`User ${input.username} is banned from this channel`);
+  }
+
+  const timedOut = await modRepo.isUserTimedOut(input.channelId, input.userId);
+  if (timedOut) {
+    const expiry = new Date(timedOut.expiresAt).getTime();
+    if (Date.now() < expiry) {
+      const remaining = Math.ceil((expiry - Date.now()) / 1000);
+      throw new Error(`User ${input.username} is timed out. Please wait ${remaining} seconds.`);
+    }
+    // Timeout expired, allow the message
+  }
+
   const body = input.body.trim();
   if (!body) throw new ChatSendError("empty", "Message cannot be empty");
 
