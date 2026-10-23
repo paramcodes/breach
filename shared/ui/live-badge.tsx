@@ -1,6 +1,7 @@
 import type { HTMLAttributes } from "react";
 
 import { colors, radii } from "../design-tokens/tokens";
+import { focusVisible } from "../lib/a11y";
 
 type LiveBadgeProps = HTMLAttributes<HTMLSpanElement>;
 
@@ -17,6 +18,7 @@ export function LiveBadge({ style, ...rest }: LiveBadgeProps) {
         display: "inline-block",
         ...style,
       }}
+      className={focusVisible}
       {...rest}
     >
       LIVE

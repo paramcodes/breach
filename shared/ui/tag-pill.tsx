@@ -1,6 +1,7 @@
 import type { HTMLAttributes } from "react";
 
 import { colors, radii } from "../design-tokens/tokens";
+import { focusVisible } from "../lib/a11y";
 
 type TagPillProps = HTMLAttributes<HTMLSpanElement>;
 
@@ -16,6 +17,7 @@ export function TagPill({ style, ...rest }: TagPillProps) {
         display: "inline-block",
         ...style,
       }}
+      className={focusVisible}
       {...rest}
     />
   );

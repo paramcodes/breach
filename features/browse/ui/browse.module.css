@@ -354,6 +354,19 @@
   border: 0;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .bannerAction,
+  .heroControl {
+    transition: none;
+  }
+
+  .bannerAction:active,
+  .heroControl:active,
+  .heroPeek:active {
+    transform: none;
+  }
+}
+
 @media (hover: hover) and (pointer: fine) {
   .bannerAction:hover,
   .heroControl:hover,

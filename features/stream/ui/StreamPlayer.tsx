@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 import { colors } from "@/shared/design-tokens/tokens";
 import { LiveBadge } from "@/shared/ui/live-badge";
@@ -9,6 +9,7 @@ import { formatViewerCount } from "../format";
 import type { WatchStream } from "../stream.types";
 import { MuxVideo, type MuxVideoElement } from "./MuxVideo";
 import styles from "./watch.module.css";
+import { reducedMotion, reducedMotionStyle } from "@/shared/lib/a11y";
 
 type StreamPlayerProps = {
   channelName: string;
@@ -26,6 +27,16 @@ export function StreamPlayer({ channelName, stream, theater, onToggleTheater }: 
   const isLive = stream?.status === "live";
   const playbackId = stream?.playbackId ?? null;
   const showPlayer = isLive && playbackId !== null && !failed;
+
+  // Check for reduced motion preference
+  const [reducedMotion, setReducedMotion] = useState(false);
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mediaQuery.matches);
+    const listener = (event: MediaQueryListEvent) => setReducedMotion(event.matches);
+    mediaQuery.addEventListener("change", listener);
+    return () => mediaQuery.removeEventListener("change", listener);
+  }, []);
 
   const togglePlay = () => {
     const player = playerRef.current;
@@ -45,8 +56,13 @@ export function StreamPlayer({ channelName, stream, theater, onToggleTheater }: 
 
   const fallback = offlineCopy(isLive, channelName);
 
+  // Apply reduced motion class to the player frame when preferred
+  const playerFrameClass = reducedMotion
+    ? `${styles.playerFrame} ${styles.reducedMotion}`
+    : styles.playerFrame;
+
   return (
-    <div className={styles.playerFrame}>
+    <div className={playerFrameClass}>
       {showPlayer ? (
         <div className={styles.playerStage}>
           <MuxVideo

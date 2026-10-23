@@ -349,17 +349,3 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .control,
-  .follow,
-  .followActive {
-    transition: none;
-  }
-
-  .control:active,
-  .follow:active,
-  .followActive:active,
-  .chatSend:active {
-    transform: none;
-  }
-}
