@@ -144,7 +144,7 @@ Repository ports define the contract; adapters swap between in-memory (tests), S
   Your browser does not support the video tag.
 </video>
 
-*Demo showing: Home page → Browse page with live streams & categories → Watch page (shroud) → Studio/go-live page*
+*Demo showing: Home → Search → Category (Valorant) → Watch (shroud) → Studio → Studio/Emotes*
 
 ## Demo videos
 
